@@ -8,6 +8,33 @@ class ScoreViewModel : ViewModel() {
     private val _state = MutableStateFlow<ScoreboardState>(ScoreboardState.PresenterModeState())
     val state: StateFlow<ScoreboardState> = _state
 
+    fun reset() {
+        _state.value = ScoreboardState.EditModeState()
+    }
+    fun updateState(
+        title: String,
+        top_team: String,
+        bottom_team: String,
+        topScore1: String,
+        topScore2: String,
+        topScore3: String,
+        bottomScore1: String,
+        bottomScore2: String,
+        bottomScore3: String
+    ) {
+        _state.value  = ScoreboardState.PresenterModeState(
+            title = title,
+            topTeamName = top_team,
+            bottomTeamName = bottom_team,
+            topTeamScorePeriod1 = topScore1.toInt(),
+            topTeamScorePeriod2 = topScore2.toInt(),
+            topTeamScorePeriod3 = topScore3.toInt(),
+            bottomTeamScorePeriod1 = bottomScore1.toInt(),
+            bottomTeamScorePeriod2 = bottomScore2.toInt(),
+            bottomTeamScorePeriod3 = bottomScore3.toInt(),
+
+        )
+    }
     fun toggleEditMode(state: ScoreboardState){
         if (state is ScoreboardState.PresenterModeState) {
             _state.value = ScoreboardState.EditModeState(
@@ -36,9 +63,35 @@ class ScoreViewModel : ViewModel() {
         }
     }
 
+    fun updateScores(state: ScoreboardState, topScores: List<String>, bottomScores: List<String>){
+        //preserving the state from data store to edit mode
+        if(state is ScoreboardState.PresenterModeState) {
+            _state.value = state.copy(
+                topTeamScorePeriod1 = topScores[0].toInt(),
+                topTeamScorePeriod2 = topScores[1].toInt(),
+                topTeamScorePeriod3 = topScores[2].toInt(),
+                bottomTeamScorePeriod1 = bottomScores[0].toInt(),
+                bottomTeamScorePeriod2 = bottomScores[1].toInt(),
+                bottomTeamScorePeriod3 = bottomScores[2].toInt(),
+            )
+        }
+    }
     fun updateTitle(state: ScoreboardState, title: String) {
         if(state is ScoreboardState.EditModeState) {
             _state.value = state.copy(title = title)
+        }
+    }
+    fun updateTitlePresenter(state: ScoreboardState, title: String) {
+        if(state is ScoreboardState.PresenterModeState) {
+            _state.value = state.copy(title = title)
+        }
+    }
+    fun updateTeamsPresenter(state: ScoreboardState, topTeam: String, bottomTeam: String) {
+        if(state is ScoreboardState.PresenterModeState) {
+            _state.value = state.copy(
+                topTeamName = topTeam,
+                bottomTeamName = bottomTeam
+            )
         }
     }
     fun updateTeams(state: ScoreboardState, topTeam: String, bottomTeam: String) {

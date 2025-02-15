@@ -8,9 +8,9 @@ sealed class ScoreboardState {
         val bottomTeamScorePeriod2:Int=0,
         val topTeamScorePeriod3: Int=0,
         val bottomTeamScorePeriod3:Int=0,
-        val topTeamName: String="Team 1",
-        val bottomTeamName: String="Team 2",
-        val title: String = "Title"
+        val topTeamName: String="",
+        val bottomTeamName: String="",
+        val title: String = ""
     ): ScoreboardState()
     data class PresenterModeState(
         val topTeamScorePeriod1: Int =0,

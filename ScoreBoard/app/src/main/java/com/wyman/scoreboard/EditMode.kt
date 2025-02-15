@@ -1,5 +1,6 @@
 package com.wyman.scoreboard
 
+import android.content.Context
 import android.content.pm.ActivityInfo
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,17 +21,33 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.lifecycle.viewModelScope
 import com.wyman.scoreboard.Utils.LockScreenOrientation
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun EditMode(viewModel: ScoreViewModel, state: ScoreboardState.EditModeState) {
+fun EditMode(
+    context: Context,
+//    scoreDataStore: DataStore<Preferences>,
+    viewModel: ScoreViewModel,
+    state: ScoreboardState.EditModeState
+) {
+    val mainActivity = context as MainActivity
+
+    val title = mainActivity.getFromStateOrDataStore(key = mainActivity.TITLE, value = state.title)
+    val topteam = mainActivity.getFromStateOrDataStore(mainActivity.TEAM_1, state.topTeamName)
     LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         Text(text = "Title")
@@ -38,12 +55,31 @@ fun EditMode(viewModel: ScoreViewModel, state: ScoreboardState.EditModeState) {
             onValueChange = {
                 viewModel.updateTitle(state, it)
             },
-            minLines = 5, value = state.title
+            minLines = 5, value = title
         )
         Button(onClick = {
-            viewModel.toggleEditMode(state)
+            viewModel.viewModelScope.launch {
+                mainActivity.writeToDataStore(mainActivity.TITLE, state.title)
+                mainActivity.writeToDataStore(mainActivity.TEAM_1, state.topTeamName)
+                mainActivity.writeToDataStore(mainActivity.TEAM_2, state.bottomTeamName)
+                mainActivity.writeToDataStore(mainActivity.SCORE_BOTTOM_1, state.bottomTeamScorePeriod1.toString())
+                mainActivity.writeToDataStore(mainActivity.SCORE_BOTTOM_2, state.bottomTeamScorePeriod2.toString())
+                mainActivity.writeToDataStore(mainActivity.SCORE_BOTTOM_3, state.bottomTeamScorePeriod3.toString())
+                mainActivity.writeToDataStore(mainActivity.SCORE_TOP_1, state.topTeamScorePeriod1.toString())
+                mainActivity.writeToDataStore(mainActivity.SCORE_TOP_2, state.topTeamScorePeriod2.toString())
+                mainActivity.writeToDataStore(mainActivity.SCORE_TOP_3, state.topTeamScorePeriod3.toString())
+                viewModel.toggleEditMode(state)
+            }
         }) {
             Text("View Score Board")
+        }
+        Button(onClick = {
+            viewModel.viewModelScope.launch {
+                context.scoreDataStore.edit {it.clear()}
+                viewModel.reset()
+            }
+        }) {
+            Text("Clear data")
         }
         Spacer(modifier = Modifier.padding(top = 16.dp))
         Row(
@@ -51,7 +87,9 @@ fun EditMode(viewModel: ScoreViewModel, state: ScoreboardState.EditModeState) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Team 1:")
-            OutlinedTextField(value = state.topTeamName, onValueChange = {
+            OutlinedTextField(value =
+            topteam//state.topTeamName
+                , onValueChange = {
                 viewModel.updateTeams(state, it, state.bottomTeamName)
             })
         }
