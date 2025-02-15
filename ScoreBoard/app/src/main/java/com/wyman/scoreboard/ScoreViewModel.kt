@@ -15,23 +15,23 @@ class ScoreViewModel : ViewModel() {
         title: String,
         top_team: String,
         bottom_team: String,
-        topScore1: String,
-        topScore2: String,
-        topScore3: String,
-        bottomScore1: String,
-        bottomScore2: String,
-        bottomScore3: String
+        topScore1: String="0",
+        topScore2: String="0",
+        topScore3: String="0",
+        bottomScore1: String="0",
+        bottomScore2: String="0",
+        bottomScore3: String="0"
     ) {
         _state.value  = ScoreboardState.PresenterModeState(
             title = title,
             topTeamName = top_team,
             bottomTeamName = bottom_team,
-            topTeamScorePeriod1 = topScore1.toInt(),
-            topTeamScorePeriod2 = topScore2.toInt(),
-            topTeamScorePeriod3 = topScore3.toInt(),
-            bottomTeamScorePeriod1 = bottomScore1.toInt(),
-            bottomTeamScorePeriod2 = bottomScore2.toInt(),
-            bottomTeamScorePeriod3 = bottomScore3.toInt(),
+            topTeamScorePeriod1 = topScore1.toIntOrNull() ?: 0,
+            topTeamScorePeriod2 = topScore2.toIntOrNull() ?: 0,
+            topTeamScorePeriod3 = topScore3.toIntOrNull() ?: 0,
+            bottomTeamScorePeriod1 = bottomScore1.toIntOrNull() ?: 0,
+            bottomTeamScorePeriod2 = bottomScore2.toIntOrNull() ?: 0,
+            bottomTeamScorePeriod3 = bottomScore3.toIntOrNull() ?: 0,
 
         )
     }
