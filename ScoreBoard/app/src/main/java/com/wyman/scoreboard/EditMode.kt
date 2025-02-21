@@ -55,7 +55,7 @@ fun EditMode(
             onValueChange = {
                 viewModel.updateTitle(state, it)
             },
-            minLines = 5, value = title
+            minLines = 3, value = title
         )
         Button(onClick = {
             viewModel.viewModelScope.launch {
@@ -80,6 +80,11 @@ fun EditMode(
             }
         }) {
             Text("Clear data")
+        }
+        Button(onClick = {
+            viewModel.clearScores(state)
+        }) {
+            Text("Clear scores")
         }
         Spacer(modifier = Modifier.padding(top = 16.dp))
         Row(

@@ -11,6 +11,18 @@ class ScoreViewModel : ViewModel() {
     fun reset() {
         _state.value = ScoreboardState.EditModeState()
     }
+
+    fun clearScores(state: ScoreboardState.EditModeState) {
+        _state.value = state.copy(
+                        topTeamScorePeriod3 = 0,
+                        topTeamScorePeriod2 = 0,
+                        topTeamScorePeriod1 = 0,
+                        bottomTeamScorePeriod1 = 0,
+                        bottomTeamScorePeriod2 = 0,
+                        bottomTeamScorePeriod3 = 0
+        )
+    }
+
     fun updateState(
         title: String,
         top_team: String,
@@ -32,7 +44,6 @@ class ScoreViewModel : ViewModel() {
             bottomTeamScorePeriod1 = bottomScore1.toIntOrNull() ?: 0,
             bottomTeamScorePeriod2 = bottomScore2.toIntOrNull() ?: 0,
             bottomTeamScorePeriod3 = bottomScore3.toIntOrNull() ?: 0,
-
         )
     }
     fun toggleEditMode(state: ScoreboardState){
