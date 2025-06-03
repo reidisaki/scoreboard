@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "ScoreBoard"
 include(":app")
- 
+include(":smelly")
+include(":app:mylibrary")
